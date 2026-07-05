@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# Virtual Environment
+venv/
+.venv/
+env/
+
+# YOLOv5 Training outputs
+yolov5-7.0/runs/
+
+# Model weights (large binary, regeneratable)
+*.pt
+
+# IDE
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

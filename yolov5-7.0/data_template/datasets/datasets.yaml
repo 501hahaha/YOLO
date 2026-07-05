@@ -1,0 +1,22 @@
+# 数据集目录结构模板
+#
+# 使用方式：
+#   1. 将图片放入 images/，标注文件放入 labels/
+#   2. 修改 split.py 中的路径和比例
+#   3. 运行 python split.py 自动分割数据集
+#   4. 修改 datasets.yaml 中的 path、nc、names
+
+# Datasets
+path: ./data_template/datasets/        # 数据集根目录 (相对于 yolov5-7.0/)
+train: datasets/train/images/          # 训练集图片路径
+val: datasets/val/images/              # 验证集图片路径
+test: datasets/test/images/            # 测试集图片路径 (可选)
+# Number of Classes
+nc: 1
+# Classes Name List
+names:
+  0: class_name
+
+# 训练命令示例:
+# cd yolov5-7.0
+# python train.py --data data_template/datasets/datasets.yaml --weights yolov5n.pt --epochs 200 --batch-size 64 --imgsz 320
