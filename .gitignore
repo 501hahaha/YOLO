@@ -18,8 +18,11 @@ conda_*/
 # YOLOv5 Training outputs
 yolov5-7.0/runs/
 
-# Model weights (large binary, regeneratable)
-*.pt
+# Model weights (training outputs, regeneratable)
+runs/**/*.pt
+
+# But keep pretrained base weights
+!yolov5-7.0/yolov5n.pt
 
 # IDE
 .idea/
