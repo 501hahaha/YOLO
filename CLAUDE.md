@@ -85,6 +85,11 @@ YOLO/
 ### 本地训练
 
 ```powershell
+# 0. 数据标注 (可选)
+cd X-AnyLabeling
+pip install -r requirements.txt
+python anylabeling/app.py
+
 # 1. 安装环境
 .\setup.ps1
 
