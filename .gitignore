@@ -1,3 +1,16 @@
+# ============================================================
+# Branch workflow
+# ============================================================
+# main   = ym   (本地开发, origin/main)
+# public = Mbmx (对外发布, origin/public → origin-public/main)
+#
+# 工作流: main 开发 → cherry-pick 到 public → 双推
+#   git checkout public
+#   git checkout main -- <files>               # 或 git cherry-pick <commit>
+#   git commit --author="Mbmx <mbmx@example.com>" -m "..."
+#   git push origin public && git push origin-public public:main
+# ============================================================
+
 # Python
 __pycache__/
 *.py[cod]
