@@ -1,0 +1,42 @@
+# ============================================================
+# YOLOv5 远程服务器训练 — 连接配置
+# ============================================================
+# 使用前请根据你的服务器/云平台修改以下配置
+
+# --- 服务器连接 ---
+server:
+  host: "192.168.x.x"         # 服务器 IP 地址
+  port: 22                    # SSH 端口 (AutoDL 通常不是 22)
+  user: "root"                # SSH 用户名
+  # key_path: "~/.ssh/id_rsa"  # SSH 私钥路径 (取消注释则用密钥登录)
+
+# --- 远程路径 ---
+remote:
+  project_root: "/root/YOLO"          # 服务器端工程根目录
+  data_root: "/root/YOLO/data"        # 数据集存放目录 (需手动上传)
+
+# --- 本地路径 (相对于工程根目录 YOLO/) ---
+local:
+  project_root: "."                   # 本地工程根目录
+  sync_dir: "yolov5-7.0"             # 需要同步的代码目录
+  scripts_dir: "server"              # 脚本目录
+
+# --- 同步排除规则 ---
+sync:
+  exclude:
+    - "venv/"
+    - "__pycache__/"
+    - "*.pyc"
+    - ".git/"
+    - "runs/"
+    - "data/"
+    - "datasets/"
+    - "data_template/"
+    - "K230_Yolov5n/"
+    - "X-AnyLabeling/"
+    - "*.kmodel"
+    - "*.onnx"
+    - "*.engine"
+    - "*.torchscript"
+    - ".claude/"
+    - "*.pt"                         # 预训练权重已纳入版本管理的不排除

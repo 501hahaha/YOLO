@@ -39,6 +39,19 @@ YOLO/
 │   ├── mp_deployment_source/    # 部署源码和 kmodel
 │   ├── CV_test/                 # 端侧测试脚本
 │   └── test_yolov5/             # 分类/检测/分割测试
+├── server/                        # 远程服务器训练
+│   ├── config.yaml                # 服务器连接配置 (SSH/路径/排除规则)
+│   ├── setup.sh                   # 服务器端一键环境安装
+│   ├── train.sh                   # 服务器端训练 (硬件自适应)
+│   ├── sync_push.sh               # 本地→服务器 代码同步 (rsync)
+│   ├── sync_pull.sh               # 服务器→本地 权重/结果拉取
+│   └── connect.sh                 # 快速 SSH 连接
+├── X-AnyLabeling/                 # 数据标注工具 (X-AnyLabeling)
+│   ├── anylabeling/               # 核心应用代码
+│   ├── assets/                    # 静态资源 (图标/图片)
+│   ├── docs/                      # 使用文档
+│   ├── examples/                  # 标注配置示例
+│   └── requirements.txt           # 依赖清单
 ├── setup.ps1                    # 一键安装环境 (自动检测GPU/CPU)
 ├── train.ps1                    # 训练 (硬件自适应 batch-size/workers)
 ├── detect.ps1                   # 推理检测
@@ -48,10 +61,12 @@ YOLO/
 ├── CLAUDE.md                    # 本文件 (Claude Code 自动加载)
 ├── 模型训练.md                   # 训练完整指南
 └── .claude/skills/              # Claude Code 技能文件
-    ├── yolo-train/SKILL.md      # 训练
-    ├── yolo-detect/SKILL.md     # 推理检测
-    ├── yolo-export/SKILL.md     # 模型导出
-    └── yolo-validate/SKILL.md   # 验证评估
+    ├── yolo-train/SKILL.md        # 本地训练
+    ├── yolo-train-server/SKILL.md # 远程服务器训练
+    ├── yolo-detect/SKILL.md       # 推理检测
+    ├── yolo-export/SKILL.md       # 模型导出
+    ├── yolo-validate/SKILL.md     # 验证评估
+    └── yolo-kmodel/SKILL.md       # ONNX→K230 kmodel 转换
 ```
 
 ## 环境
@@ -66,6 +81,8 @@ YOLO/
 | 输入尺寸 | 320x320 (K230适配) |
 
 ## 快速开始
+
+### 本地训练
 
 ```powershell
 # 1. 安装环境
@@ -83,6 +100,22 @@ YOLO/
 .\export.ps1 -Weights best.pt -Format onnx
 cd K230_Yolov5n
 .\convert.ps1 -Model ..\yolov5-7.0\best.onnx -Dataset <校准集目录>
+```
+
+### 远程服务器训练
+
+```bash
+# 1. 编辑服务器连接配置
+vim server/config.yaml
+
+# 2. 推送代码 + 远程安装环境 (首次)
+bash server/sync_push.sh
+bash server/connect.sh    # SSH连接后执行: bash server/setup.sh
+
+# 3. 训练 (代码同步 → 远程训练 → 拉取结果)
+bash server/sync_push.sh
+ssh -p <端口> root@<IP> "cd /root/YOLO && bash server/train.sh --data data/datasets.yaml --epochs 200"
+bash server/sync_pull.sh
 ```
 
 ## 注意事项
