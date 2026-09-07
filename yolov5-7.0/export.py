@@ -46,6 +46,7 @@ TensorFlow.js:
 
 import argparse
 import contextlib
+import inspect
 import json
 import os
 import platform
@@ -147,16 +148,24 @@ def export_onnx(model, im, file, opset, dynamic, simplify, prefix=colorstr('ONNX
         elif isinstance(model, DetectionModel):
             dynamic['output0'] = {0: 'batch', 1: 'anchors'}  # shape(1,25200,85)
 
-    torch.onnx.export(
-        model.cpu() if dynamic else model,  # --dynamic only compatible with cpu
-        im.cpu() if dynamic else im,
-        f,
+    # PyTorch 2.6+ 默认启用 dynamo 导出器。当前 K230 的 nncase 2.9.0
+    # 对其生成的 opset 18/allowzero 结构不兼容，因此优先使用传统导出器，
+    # 让 --opset 12 真正生效；旧版 PyTorch 没有 dynamo 参数时保持兼容。
+    export_kwargs = dict(
         verbose=False,
         opset_version=opset,
         do_constant_folding=True,
         input_names=['images'],
         output_names=output_names,
         dynamic_axes=dynamic or None)
+    if 'dynamo' in inspect.signature(torch.onnx.export).parameters:
+        export_kwargs['dynamo'] = False
+
+    torch.onnx.export(
+        model.cpu() if dynamic else model,  # --dynamic only compatible with cpu
+        im.cpu() if dynamic else im,
+        f,
+        **export_kwargs)
 
     # Checks
     model_onnx = onnx.load(f)  # load onnx model
@@ -172,8 +181,9 @@ def export_onnx(model, im, file, opset, dynamic, simplify, prefix=colorstr('ONNX
     # Simplify
     if simplify:
         try:
-            cuda = torch.cuda.is_available()
-            check_requirements(('onnxruntime-gpu' if cuda else 'onnxruntime', 'onnx-simplifier>=0.4.1'))
+            # 项目环境已固定 onnxruntime/onnxsim；不要让 YOLOv5 的
+            # ``onnx-simplifier`` 别名检查把依赖安装到系统 Python。
+            import onnxruntime  # noqa: F401
             import onnxsim
 
             LOGGER.info(f'{prefix} simplifying with onnx-simplifier {onnxsim.__version__}...')

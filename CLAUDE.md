@@ -25,10 +25,13 @@ YOLO/
 │   ├── data_template/           # 数据集目录模板 (含 split.py)
 │   ├── utils/                   # 工具函数库
 │   └── Arial.ttf / Arial.zip    # 字体文件 (图表渲染用)
+├── ball_image/                  # 小球原图、YOLO 数据集和合成中间产物
+│   ├── source/                  # 原始轨道图
+│   ├── datasets/                # yolo_dataset_10000/ref18/benchmark/smoke
+│   └── artifacts/               # 按需生成的 output/debug 图，默认不保留
+├── docs/                        # 项目布局与 K230 工作流文档
 ├── K230_Yolov5n/                # K230 边缘端部署
-│   ├── convert.ps1              # 一键 ONNX→kmodel 转换脚本
 │   ├── main.py                  # K230 端推理入口 (检测+跟踪+串口)
-│   ├── best.kmodel              # 已编译 K230 模型
 │   ├── nncase_kpu-*.whl         # Windows nncase KPU 离线安装包
 │   ├── tools/                   # kmodel 转换工具集
 │   │   ├── to_kmodel.py         # ONNX → kmodel
@@ -46,21 +49,23 @@ YOLO/
 │   ├── sync_push.sh               # 本地→服务器 代码同步 (rsync)
 │   ├── sync_pull.sh               # 服务器→本地 权重/结果拉取
 │   └── connect.sh                 # 快速 SSH 连接
+├── scripts/                       # 项目自动化脚本，不是 skills
+│   ├── yolo/                      # 环境、训练、验证、推理、导出
+│   │   ├── setup.ps1 / train.ps1 / validate.ps1
+│   │   └── detect.ps1 / export.ps1
+│   ├── dataset/                   # 数据生成与重组
+│   └── k230/                      # K230 自动转换与配置
+│       ├── convert.ps1
+│       └── finish_training_and_convert.ps1
 ├── X-AnyLabeling/                 # 数据标注工具 (X-AnyLabeling)
 │   ├── anylabeling/               # 核心应用代码
 │   ├── assets/                    # 静态资源 (图标/图片)
 │   ├── docs/                      # 使用文档
 │   ├── examples/                  # 标注配置示例
 │   └── requirements.txt           # 依赖清单
-├── setup.ps1                    # 一键安装环境 (自动检测GPU/CPU)
-├── train.ps1                    # 训练 (硬件自适应 batch-size/workers)
-├── detect.ps1                   # 推理检测
-├── export.ps1                   # 模型导出
-├── validate.ps1                 # 验证评估
 ├── README.md                    # 工程使用说明
 ├── CLAUDE.md                    # 本文件 (Claude Code 自动加载)
-├── 模型训练.md                   # 训练完整指南
-└── .claude/skills/              # Claude Code 技能文件
+└── .claude/skills/              # Claude Code 技能源副本
     ├── yolo-train/SKILL.md        # 本地训练
     ├── yolo-train-server/SKILL.md # 远程服务器训练
     ├── yolo-detect/SKILL.md       # 推理检测
@@ -68,6 +73,8 @@ YOLO/
     ├── yolo-validate/SKILL.md     # 验证评估
     └── yolo-kmodel/SKILL.md       # ONNX→K230 kmodel 转换
 ```
+
+`.codex/skills/` 是上面 Claude skill 的 Codex 适配副本，具体用途见 `docs/PROJECT_LAYOUT.md`。
 
 ## 环境
 
@@ -91,20 +98,20 @@ pip install -r requirements.txt
 python anylabeling/app.py
 
 # 1. 安装环境
-.\setup.ps1
+.\scripts\yolo\setup.ps1
 
-# 2. 准备数据集 (参考 data_template/ 目录结构)
+# 2. 准备数据集 (当前基线集)
+.\scripts\yolo\train.ps1 -Data ball_image\datasets\yolo_dataset_10000\data.yaml -Epochs 200
 
 # 3. 训练
-.\train.ps1 -Data your_data/datasets.yaml -Epochs 200
+.\scripts\yolo\train.ps1 -Data your_data/datasets.yaml -Epochs 200
 
 # 4. 检测
-.\detect.ps1 -Source image.jpg -Weights runs/train/exp/weights/best.pt
+.\scripts\yolo\detect.ps1 -Source image.jpg -Weights yolov5-7.0\runs\train\ball_320\weights\best.pt
 
 # 5. 导出 ONNX + 转 kmodel
-.\export.ps1 -Weights best.pt -Format onnx
-cd K230_Yolov5n
-.\convert.ps1 -Model ..\yolov5-7.0\best.onnx -Dataset <校准集目录>
+.\scripts\yolo\export.ps1 -Weights runs/train/ball_320/weights/best.pt -Format onnx -ImgSize 320
+.\scripts\k230\convert.ps1 -Model .\yolov5-7.0\runs\train\ball_320\weights\best.onnx -Dataset .\ball_image\datasets\yolo_dataset_10000\images\val
 ```
 
 ### 远程服务器训练
@@ -125,8 +132,10 @@ bash server/sync_pull.sh
 
 ## 注意事项
 
-1. 主工作目录是 `yolov5-7.0/`
-2. K230 部署完整流程: `.pt → ONNX → kmodel → K230`
-3. 所有脚本均在工程根目录执行
-4. Pillow 版本必须 < 10.0
-5. 字体文件 Arial.ttf 用于训练图表渲染
+1. 主工作目录是 `yolov5-7.0/`，数据根目录是 `ball_image/`。
+2. K230 部署完整流程: `.pt → ONNX → kmodel → K230`；ONNX 只放在对应实验的 `runs/train/<experiment>/weights/`。
+3. `yolo_dataset_10000` 是基线，`yolo_dataset_10000_ref18` 是对照实验，`benchmark/smoke` 只用于快速检查。
+4. `.claude/skills/` 是 Claude 源副本，`.codex/skills/` 是 Codex 适配副本；完整用途见 `docs/PROJECT_LAYOUT.md`。
+5. 所有脚本均在工程根目录执行。
+6. Pillow 版本必须 < 10.0。
+7. 字体文件 Arial.ttf 用于训练图表渲染。

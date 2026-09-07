@@ -1,5 +1,5 @@
 # YOLOv5 模型导出脚本 (ONNX/TensorRT/TorchScript)
-# 用法: .\export.ps1 -Weights best.pt -Format onnx
+# 用法: .\scripts\yolo\export.ps1 -Weights best.pt -Format onnx
 param(
     [string]$Weights = "runs/train/exp/weights/best.pt",
     [string]$Format = "onnx",
@@ -8,7 +8,7 @@ param(
     [switch]$Simplify
 )
 
-$root = Split-Path -Parent $MyInvocation.MyCommand.Path
+$root = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
 Set-Location "$root\yolov5-7.0"
 
 $python = if (Test-Path "..\venv\Scripts\python.exe") { "..\venv\Scripts\python.exe" } else { "python" }

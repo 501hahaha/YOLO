@@ -2,9 +2,9 @@
 # 自动检测 GPU/CPU/RAM，选择最优训练参数
 #
 # 用法:
-#   .\train.ps1 -Data data.yaml -Epochs 200
-#   .\train.ps1 -Data data.yaml -Weights best.pt -Epochs 100   # 继续训练
-#   .\train.ps1 -Data data.yaml -Epochs 300 -ImgSize 640       # 自定义尺寸
+#   .\scripts\yolo\train.ps1 -Data data.yaml -Epochs 200
+#   .\scripts\yolo\train.ps1 -Data data.yaml -Weights best.pt -Epochs 100   # 继续训练
+#   .\scripts\yolo\train.ps1 -Data data.yaml -Epochs 300 -ImgSize 640       # 自定义尺寸
 #
 # 数据集要求:
 #   data.yaml 需包含 path, train, val, nc, names 字段
@@ -26,7 +26,7 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$root = Split-Path -Parent $MyInvocation.MyCommand.Path
+$root = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
 Set-Location "$root\yolov5-7.0"
 
 # ============================================================
@@ -40,14 +40,14 @@ if (Test-Path ".\venv\Scripts\python.exe") {
 } elseif (Get-Command python -ErrorAction SilentlyContinue) {
     $python = "python"
 } else {
-    Write-Host "[ERROR] Python not found. Run: .\setup.ps1" -ForegroundColor Red
+    Write-Host "[ERROR] Python not found. Run: .\scripts\yolo\setup.ps1" -ForegroundColor Red
     exit 1
 }
 
 # 验证 PyTorch 是否可用
 $torchCheck = & $python -c "import torch; print(torch.__version__)" 2>&1
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "[ERROR] PyTorch not installed. Run: .\setup.ps1" -ForegroundColor Red
+    Write-Host "[ERROR] PyTorch not installed. Run: .\scripts\yolo\setup.ps1" -ForegroundColor Red
     exit 1
 }
 
@@ -192,6 +192,6 @@ if ($exitCode -eq 0) {
     Write-Host "常见问题:" -ForegroundColor Yellow
     Write-Host "  1. CUDA out of memory → 减小 batch-size 或 imgsz" -ForegroundColor Gray
     Write-Host "  2. 数据路径不存在 → 检查 $Data 指向的目录" -ForegroundColor Gray
-    Write-Host "  3. 依赖缺失 → 运行 .\setup.ps1 安装环境" -ForegroundColor Gray
+    Write-Host "  3. 依赖缺失 → 运行 .\scripts\yolo\setup.ps1 安装环境" -ForegroundColor Gray
 }
 exit $exitCode

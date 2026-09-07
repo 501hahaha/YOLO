@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python:*)",
+      "Bash(cd:yolov5-7.0:*)",
+      "Bash(cd:K230_Yolov5n:*)",
+      "Bash(bash:server/*)"
+    ]
+  }
+}

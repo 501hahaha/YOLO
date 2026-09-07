@@ -8,10 +8,11 @@ allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 
 ## 项目环境
 
+> 完整环境上下文见 references/yolo-env.md（路径、Python、模型架构、输出约定）
+
 - **框架**: YOLOv5 v7.0 (Ultralytics, GPL-3.0)
 - **代码目录**: `yolov5-7.0/`
-- **Python环境**: 通过 `..\setup.ps1` 创建 `venv/`，或使用系统Python (推荐 venv)
-- **关键依赖**: Pillow==9.5, torch>=1.10.0
+- **训练脚本**: `train.py`
 
 ## 模型架构
 
@@ -117,6 +118,17 @@ runs/train/<exp名称>/
 1. 将图片放入 `images/`，标注放入 `labels/`
 2. 运行 `python split.py` 分割数据集
 3. 修改 `datasets/datasets.yaml` 中的 `nc` 和 `names`
-4. 开始训练: `..\train.ps1 -Data data_template/datasets/datasets.yaml`
+4. 开始训练: `scripts\yolo\train.ps1 -Data data_template/datasets/datasets.yaml`
 
 使用前检查对应的 `datasets/datasets.yaml` 确认类别数和路径。
+
+## Next Steps
+
+训练完成后：
+
+| 下一步 | 技能 |
+|--------|------|
+| 评估模型精度 | `yolo-validate` — 支持多模型并行对比 |
+| 导出 ONNX | `yolo-export` — 支持多格式并行导出 |
+| 一键到 K230 | `yolo-pipeline` — train→validate→export→kmodel 全自动 |
+| 远程 GPU 训练 | `yolo-train-server` — SSH 连接 + 远程训练 |

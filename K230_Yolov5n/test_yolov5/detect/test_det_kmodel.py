@@ -103,7 +103,7 @@ def draw_boxes(image, detections, class_names,colors):
 
 def main():
     # 设置参数
-    model_path = '../../runs/train/exp/weights/best.kmodel'  # 替换为你的 kmodel 模型路径
+    model_path = 'best.kmodel'  # 替换为你的 kmodel 模型路径 (相对于当前目录)
     image_path = '../test_images/test.jpg'  # 替换为你要检测的图像路径
     input_width = 320
     input_height = 320

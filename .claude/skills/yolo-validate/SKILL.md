@@ -8,14 +8,15 @@ allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 
 ## 项目环境
 
-- **框架**: YOLOv5 v7.0
+> 完整环境上下文见 references/yolo-env.md（路径、Python、模型架构、输出约定）
+
+- **框架**: YOLOv5 v7.0 (Ultralytics, GPL-3.0)
 - **代码目录**: `yolov5-7.0/`
-- **Python环境**: 通过 `..\setup.ps1` 创建 `venv/`，或使用系统Python (推荐 venv)
-- **验证脚本**: `yolov5-7.0/val.py`
+- **验证脚本**: `val.py`
 
 ## 命令模板
 
-### 基础验证
+### 单模型验证（直接执行）
 
 ```bash
 cd yolov5-7.0
@@ -26,6 +27,19 @@ python val.py \
   --batch-size 16 \
   --verbose
 ```
+
+### 多模型并行验证（推荐）
+
+同时验证多个实验的 best.pt，使用 `agents/yolo-validator.md` 子代理并行执行：
+
+> 触发词: "validate all models in runs/train/" / "对比所有实验的 mAP"
+
+1. 自动扫描 `runs/train/*/weights/best.pt`
+2. 每个模型 spawn 一个 yolo-validator 子代理
+3. N 个验证并行跑，节省 N× 等待时间
+4. 结果按 mAP@0.5 排名汇总表格
+
+**并行度**: 自动检测 GPU 数量。若 GPU 数 < 模型数，多余的 validator 切 CPU 避免争抢。
 
 ### 使用ONNX/Engine验证
 
@@ -88,9 +102,9 @@ runs/val/<exp名称>/
 └── results.txt           # 详细验证结果
 ```
 
-## 多模型对比
+## 多模型对比（手动降级方案）
 
-为了对比不同模型的性能，分别运行验证并记录:
+当不需要并行或只有 1-2 个模型时，可手动分别运行：
 
 ```bash
 # 模型A
@@ -101,6 +115,10 @@ python val.py --weights runs/train/exp2/weights/best.pt --data data.yaml --name 
 ```
 
 对比 `runs/val/model_a/` 和 `runs/val/model_b/` 中的结果。
+
+## 在 Pipeline 中的位置
+
+`yolo-pipeline` 技能在 Stage 2 自动调用并行验证，无需手动操作。参见 `skills/yolo-pipeline/SKILL.md`。
 
 ## 常见问题
 

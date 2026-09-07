@@ -8,10 +8,11 @@ allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 
 ## 项目环境
 
+> 完整环境上下文见 references/yolo-env.md（路径、Python、模型架构、输出约定）
+
 - **框架**: YOLOv5 v7.0 (Ultralytics, GPL-3.0)
 - **代码目录**: `yolov5-7.0/`
-- **Python环境**: 通过 `..\setup.ps1` 创建 `venv/`，或使用系统Python (推荐 venv)
-- **推理脚本**: `yolov5-7.0/detect.py`
+- **推理脚本**: `detect.py`
 
 ## 命令模板
 
@@ -106,6 +107,17 @@ python detect.py --weights best.torchscript --source img.jpg
 
 ## 项目可用权重
 
-- `yolov5-7.0/best.pt` / `yolov5-7.0/best.onnx` - 训练后的最佳模型
-- `yolov5-7.0/best_1000.pt` / `yolov5-7.0/best_1000.onnx` - 1000轮训练模型
+- `yolov5-7.0/runs/train/<experiment>/weights/best.pt` / `best.onnx` - 对应实验的最佳模型
+- 当前基线示例：`yolov5-7.0/runs/train/ball_320/weights/best.pt`
 - `yolov5n.pt` - 预训练基础权重
+
+## 大批量并行检测
+
+> 对于 1000+ 图片的批量场景，可拆分成 N 组并行 detect：
+
+1. 按文件数均分成 N 份临时子目录
+2. N 个 detect.py 进程并行处理
+3. 结果汇总到 `runs/detect/batch_*/`
+
+> 约束：并行数不超过 GPU 数。单 GPU 时主进程用 GPU，其余切 CPU。
+> 触发词："并行检测这 5000 张图" / "split and detect in parallel"

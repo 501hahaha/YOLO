@@ -47,9 +47,9 @@
         0.225
     ],
     "categories": [
-        "22222"
+        "object"
     ],
     "nms_option": false,
-    "kmodel_path": "best_AnchorBaseDet_can2_5_s_20250729150957.kmodel",
+    "kmodel_path": "best.kmodel",
     "num_classes": 1
 }

@@ -16,5 +16,9 @@
             "command": "extension.execute",
             "priority": 4
         }
+    ],
+    "python.analysis.extraPaths": [
+        "${workspaceFolder}/K230_Yolov5n",
+        "${workspaceFolder}/K230_Yolov5n/tools"
     ]
 }

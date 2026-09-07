@@ -105,8 +105,9 @@ def single_template_match(template_img, test_img):
     return test_img_draw
 
 if __name__ == "__main__":
-    template_path = r"D:\Users\a3828\Desktop\K230_Yolov5n\CV_test\2.png"
-    test_img_path = r"D:\Users\a3828\Desktop\K230_Yolov5n\CV_test\1.png"
+    # 修改为你的模板和测试图像路径
+    template_path = r"2.png"
+    test_img_path = r"1.png"
 
     template_img = cv2.imread(template_path)
     test_img = cv2.imread(test_img_path)

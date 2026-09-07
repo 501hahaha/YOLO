@@ -5,7 +5,7 @@ import os
 import collections
 
 # 修改你的项目路径、原始图像数据和标签路径
-cur_path = "E:/test/datasets/"
+cur_path = "./datasets/"  # 默认为当前 data_template/ 下的 datasets 目录
 image_original_path = cur_path + "images/"
 label_original_path = cur_path + "labels/"
 image_format = '.jpg'   # 样本照片的格式后缀 .jpg .png .bmp等等

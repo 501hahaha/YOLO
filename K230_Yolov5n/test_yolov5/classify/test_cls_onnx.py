@@ -54,7 +54,7 @@ def draw_result(image, ids,score, class_names):
 
 def main():
     # 设置参数
-    model_path = '../../runs/train-cls/exp/weights/best.onnx'  # 替换为你的 ONNX 模型路径
+    model_path = 'best.onnx'  # 替换为你的 ONNX 模型路径 (相对于当前目录)
     image_path = '../test_images/test_apple.jpg'  # 替换为你要检测的图像路径
     input_width = 224
     input_height = 224

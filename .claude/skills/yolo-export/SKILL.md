@@ -8,10 +8,11 @@ allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 
 ## 项目环境
 
-- **框架**: YOLOv5 v7.0
+> 完整环境上下文见 references/yolo-env.md（路径、Python、模型架构、输出约定）
+
+- **框架**: YOLOv5 v7.0 (Ultralytics, GPL-3.0)
 - **代码目录**: `yolov5-7.0/`
-- **Python环境**: 通过 `..\setup.ps1` 创建 `venv/`，或使用系统Python (推荐 venv)
-- **导出脚本**: `yolov5-7.0/export.py`
+- **导出脚本**: `export.py`
 
 ## 支持的导出格式
 
@@ -41,6 +42,18 @@ python export.py \
   --opset 12 \
   --simplify
 ```
+
+### 多格式并行导出（推荐）
+
+同时导出到多种格式，使用 `agents/yolo-exporter.md` 子代理并行执行：
+
+> 触发词: "export best.pt to ONNX, TensorRT, and TorchScript" / "同时导出多种格式"
+
+1. 每个目标格式 spawn 一个 yolo-exporter 子代理
+2. N 个导出并行跑，省去串行等待
+3. 结果统一汇总报告
+
+**约束**: TensorRT 导出需 GPU，不可与 GPU 训练并行。
 
 ### 导出TensorRT
 
@@ -85,23 +98,11 @@ python export.py --weights best.pt --include onnx --dynamic
 | `--iou-thres` | NMS IOU阈值 | `0.45` |
 | `--conf-thres` | NMS置信度阈值 | `0.25` |
 
-## K230部署完整流程
+## K230 部署
 
-1. **训练模型**: 使用 `yolo-train` skill
-2. **导出ONNX**: 见上方命令，确保 `--imgsz 320 --batch 1`
-3. **转Kmodel**: 使用nncase工具转换
-   ```bash
-   python to_kmodel.py \
-     --target k230 \
-     --model best.onnx \
-     --dataset <校准数据集路径> \
-     --input_width 320 \
-     --input_height 320 \
-     --ptq_option 0
-   ```
-4. **部署**: 将 `.kmodel` 文件部署到K230设备
+> **自动化流程**: 使用 `yolo-pipeline` 技能可一次性完成 train → validate → export ONNX → convert kmodel 全流程。参见 `skills/yolo-pipeline/SKILL.md`。
 
-参考: `K230_Yolov5n/` 目录下的部署文件
+手动步骤参考 `yolo-kmodel` 技能和 `K230_Yolov5n/` 目录。
 
 ## 常见问题
 

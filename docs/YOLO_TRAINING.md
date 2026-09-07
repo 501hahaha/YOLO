@@ -289,8 +289,8 @@ python export.py --weights best.pt --include onnx
 python train.py --data data_test_V3/datasets/datasets.yaml --weights yolov5n.pt --img 320 --epochs 200 --batch-size 64 --cache ram  
 # Kmodel转换
 先导出onnx模型，再转换成kmodel
-python export.py --weight runs/train/exp15/weights/best.pt --imgsz 320 --batch 1 --include onnx
+python export.py --weight runs/train/<exp名称>/weights/best.pt --imgsz 320 --batch 1 --include onnx
 
-python to_kmodel.py --target k230 --model ..\..\..\runs\train\exp15\weights\best.onnx --dataset ..\..\To_Kmodel_data_test_v3\  --input_width 320 --input_height 320 --ptq_option 0
+python to_kmodel.py --target k230 --model <onnx路径> --dataset <校准集目录> --input_width 320 --input_height 320 --ptq_option 0
 
-python ..\..\..\train.py  --data E:/self/djT50_gimbal/test/combine/dataV1/datasets/datasets.yaml --weights yolov5n.pt --img 320 --epochs 200 --batch-size 64 --cache ram
+python train.py  --data <数据集路径>/datasets.yaml --weights yolov5n.pt --img 320 --epochs 200 --batch-size 64 --cache ram

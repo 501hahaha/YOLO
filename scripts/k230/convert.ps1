@@ -1,5 +1,5 @@
 # YOLOv5 → K230 kmodel 一键转换脚本
-# 用法: .\convert.ps1 -Model ..\..\yolov5-7.0\best.onnx -Dataset <校准图片目录>
+# 用法: .\scripts\k230\convert.ps1 -Model .\yolov5-7.0\runs\train\ball_320\weights\best.onnx -Dataset .\ball_image\datasets\yolo_dataset_10000\images\val
 param(
     [Parameter(Mandatory=$true)]
     [string]$Model,                              # ONNX 模型路径
@@ -13,8 +13,22 @@ param(
     [switch]$SkipVerify                         # 跳过精度验证
 )
 
-$root = Split-Path -Parent $MyInvocation.MyCommand.Path
-Set-Location "$root\tools"
+$root = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
+$toolsDir = Join-Path $root 'K230_Yolov5n\tools'
+$resolvePath = {
+    param([string]$Path)
+    if ([System.IO.Path]::IsPathRooted($Path)) {
+        return (Resolve-Path -LiteralPath $Path -ErrorAction Stop).Path
+    }
+    $candidate = Join-Path $root $Path
+    if (Test-Path -LiteralPath $candidate) {
+        return (Resolve-Path -LiteralPath $candidate -ErrorAction Stop).Path
+    }
+    return $Path
+}
+$Model = & $resolvePath $Model
+$Dataset = & $resolvePath $Dataset
+Set-Location $toolsDir
 
 $python = $(Get-Command python -ErrorAction SilentlyContinue).Source
 if (-not $python) { $python = "python" }

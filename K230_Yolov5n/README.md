@@ -49,7 +49,7 @@ python export.py --weights best.pt --imgsz 320 --batch 1 --include onnx --opset 
 
 ```bash
 cd ../K230_Yolov5n/tools
-python to_kmodel.py --target k230 --model ../../yolov5-7.0/best.onnx --dataset <校准图片目录> --input_width 320 --input_height 320 --ptq_option 0
+python to_kmodel.py --target k230 --model ../../yolov5-7.0/runs/train/ball_320/weights/best.onnx --dataset <校准图片目录> --input_width 320 --input_height 320 --ptq_option 0
 ```
 
 | 参数 | 说明 |

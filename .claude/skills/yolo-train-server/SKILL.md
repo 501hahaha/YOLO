@@ -196,7 +196,7 @@ yolov5-7.0/runs/train/<exp名称>/   # 从服务器 rsync 拉取
 
 ## 关键参数（训练）
 
-完整训练参数参考 `yolo-train` skill，常用参数：
+> 完整训练参数说明见 `yolo-train` skill。以下列出服务器特定默认值。
 
 | 参数 | 说明 | 建议值 |
 |------|------|--------|
@@ -206,6 +206,12 @@ yolov5-7.0/runs/train/<exp名称>/   # 从服务器 rsync 拉取
 | `--imgsz` | 输入尺寸 | `320` (K230 适配) |
 | `--batch-size` | 批次大小 | 根据 GPU 显存自动 |
 | `--device` | GPU 设备号 | `0` |
+
+## 训练完成后
+
+拉取结果到本地后：
+- 评估精度 → `yolo-validate` 技能（支持多模型并行对比）
+- 一键到 K230 → `yolo-pipeline` 技能（train→validate→export→kmodel 全自动）
 
 ## 云平台适配
 

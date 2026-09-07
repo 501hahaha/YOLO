@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "source": {
+    "skills": ".claude/skills",
+    "references": ".claude/references",
+    "agent_templates": ".claude/agents"
+  },
+  "synced_at": "2026-09-06",
+  "skills": [
+    "yolo-detect",
+    "yolo-export",
+    "yolo-kmodel",
+    "yolo-label",
+    "yolo-pipeline",
+    "yolo-train",
+    "yolo-train-server",
+    "yolo-validate"
+  ],
+  "codex_paths": {
+    "skills": "skills/",
+    "references": "references/"
+  },
+  "adaptations": [
+    "Removed Claude-specific allowed-tools frontmatter from Codex copies.",
+    "Rebased shared and subtask-template links to .codex/relative paths."
+  ]
+}

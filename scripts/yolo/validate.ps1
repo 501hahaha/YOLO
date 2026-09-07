@@ -1,5 +1,5 @@
 # YOLOv5 模型验证脚本
-# 用法: .\validate.ps1 -Weights best.pt -Data data.yaml
+# 用法: .\scripts\yolo\validate.ps1 -Weights best.pt -Data data.yaml
 param(
     [string]$Weights = "runs/train/exp/weights/best.pt",
     [string]$Data = "data.yaml",
@@ -7,7 +7,7 @@ param(
     [switch]$Verbose
 )
 
-$root = Split-Path -Parent $MyInvocation.MyCommand.Path
+$root = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
 Set-Location "$root\yolov5-7.0"
 
 $python = if (Test-Path "..\venv\Scripts\python.exe") { "..\venv\Scripts\python.exe" } else { "python" }

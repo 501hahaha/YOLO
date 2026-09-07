@@ -18,17 +18,25 @@ YOLO/
 │   ├── classify/            # 分类任务
 │   └── segment/             # 分割任务
 ├── K230_Yolov5n/            # K230 边缘端部署
-│   ├── best.kmodel          # 已编译 K230 模型
 │   ├── main.py              # K230 推理入口
 │   ├── mp_deployment_source/ # 部署源码和 kmodel
 │   ├── CV_test/             # 端侧测试脚本
 │   └── test_yolov5/         # detect/classify/segment 测试
-├── setup.ps1                # 一键安装环境 (PyTorch + 依赖)
-├── train.ps1                # 训练 (硬件自适应)
-├── detect.ps1               # 检测推理
-├── export.ps1               # 模型导出
-├── validate.ps1             # 模型验证
-├── 模型训练.md               # 详细训练指南
+├── ball_image/              # 原始图和 YOLO 数据集
+│   ├── source/              # 原始轨道图
+│   └── datasets/            # 正式、对照、benchmark、smoke 数据集
+├── docs/                    # 项目文档
+│   ├── YOLO_TRAINING.md     # 详细训练指南
+│   └── YOLO_K230_WORKFLOW.md # K230 工作流
+├── scripts/                 # 项目自动化脚本，不是 skills
+│   ├── yolo/                # 环境、训练、验证、推理、导出
+│   │   ├── setup.ps1
+│   │   ├── train.ps1
+│   │   ├── validate.ps1
+│   │   ├── detect.ps1
+│   │   └── export.ps1
+│   ├── dataset/             # 数据生成脚本
+│   └── k230/                # K230 转换与流水线脚本
 ├── README.md                # 本文件
 └── CLAUDE.md                # Claude Code 工程概览
 ```
@@ -38,7 +46,7 @@ YOLO/
 ### 1. 安装环境
 
 ```powershell
-.\setup.ps1
+.\scripts\yolo\setup.ps1
 ```
 
 自动完成：
@@ -75,7 +83,7 @@ names:
 ### 3. 训练
 
 ```powershell
-.\train.ps1 -Data your_dataset/datasets.yaml
+.\scripts\yolo\train.ps1 -Data your_dataset/datasets.yaml
 ```
 
 脚本会自动检测硬件并选择最优 batch size / workers：
@@ -92,38 +100,38 @@ names:
 
 ```powershell
 # 自定义轮数和尺寸
-.\train.ps1 -Data data.yaml -Epochs 300 -ImgSize 640
+.\scripts\yolo\train.ps1 -Data data.yaml -Epochs 300 -ImgSize 640
 
 # 继续训练
-.\train.ps1 -Data data.yaml -Weights best.pt -Epochs 100
+.\scripts\yolo\train.ps1 -Data data.yaml -Weights best.pt -Epochs 100
 
 # 从断点恢复
-.\train.ps1 -Data data.yaml -Resume
+.\scripts\yolo\train.ps1 -Data data.yaml -Resume
 ```
 
 ### 4. 检测
 
 ```powershell
 # 单张图
-.\detect.ps1 -Source image.jpg -Weights runs/train/exp/weights/best.pt
+.\scripts\yolo\detect.ps1 -Source image.jpg -Weights runs/train/exp/weights/best.pt
 
 # 整个目录 (保存 txt 结果)
-.\detect.ps1 -Source images/ -Weights best.pt -SaveTxt
+.\scripts\yolo\detect.ps1 -Source images/ -Weights best.pt -SaveTxt
 
 # 调低置信度阈值
-.\detect.ps1 -Source image.jpg -Conf 0.1
+.\scripts\yolo\detect.ps1 -Source image.jpg -Conf 0.1
 ```
 
 ### 5. 导出
 
 ```powershell
-.\export.ps1 -Weights best.pt -Format onnx -ImgSize 320
+.\scripts\yolo\export.ps1 -Weights best.pt -Format onnx -ImgSize 320
 ```
 
 ### 6. 验证
 
 ```powershell
-.\validate.ps1 -Weights best.pt -Data data.yaml
+.\scripts\yolo\validate.ps1 -Weights best.pt -Data data.yaml
 ```
 
 ## 模型选择
@@ -141,8 +149,8 @@ names:
 整个工程不依赖硬编码路径，复制到任意 Windows 主机后：
 
 ```powershell
-.\setup.ps1    # 自动检测硬件 + 安装环境
-.\train.ps1 -Data your_data.yaml
+.\scripts\yolo\setup.ps1    # 自动检测硬件 + 安装环境
+.\scripts\yolo\train.ps1 -Data your_data.yaml
 ```
 
 - **GPU 主机**: 自动安装 CUDA 版 PyTorch

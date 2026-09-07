@@ -1,9 +1,9 @@
 # YOLOv5 环境安装脚本
-# 用法: .\setup.ps1
+# 用法: .\scripts\yolo\setup.ps1
 # 自动检测硬件，创建虚拟环境并安装 PyTorch + 依赖
 
 $ErrorActionPreference = "Stop"
-$root = Split-Path -Parent $MyInvocation.MyCommand.Path
+$root = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
 Set-Location $root
 
 Write-Host ""
@@ -127,7 +127,7 @@ Write-Host " 环境安装完成！" -ForegroundColor Green
 Write-Host "========================================" -ForegroundColor Green
 Write-Host ""
 Write-Host "接下来:" -ForegroundColor White
-Write-Host "  1. 准备数据集 (参考 模型训练.md)" -ForegroundColor Gray
-Write-Host "  2. 开始训练: .\train.ps1 -Data your_data.yaml" -ForegroundColor Gray
-Write-Host "  3. 检测:     .\detect.ps1 -Source image.jpg" -ForegroundColor Gray
+Write-Host "  1. 准备数据集 (参考 docs\YOLO_TRAINING.md)" -ForegroundColor Gray
+Write-Host "  2. 开始训练: .\scripts\yolo\train.ps1 -Data your_data.yaml" -ForegroundColor Gray
+Write-Host "  3. 检测:     .\scripts\yolo\detect.ps1 -Source image.jpg" -ForegroundColor Gray
 Write-Host ""

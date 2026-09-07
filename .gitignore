@@ -1,14 +1,9 @@
 # ============================================================
-# Branch workflow
+# Public release identity
 # ============================================================
-# main   = ym   (本地开发, origin/main)
-# public = Mbmx (对外发布, origin/public → origin-public/main)
-#
-# 工作流: main 开发 → cherry-pick 到 public → 双推
-#   git checkout public
-#   git checkout main -- <files>               # 或 git cherry-pick <commit>
+# Public release commits use the publisher name Mbmx.
 #   git commit --author="Mbmx <mbmx@example.com>" -m "..."
-#   git push origin public && git push origin-public public:main
+# Keep local remotes and private machine settings out of the public tree.
 # ============================================================
 
 # Python
@@ -28,6 +23,9 @@ conda_*/
 # Conda
 .conda/
 
+#datasets
+ball_image/
+
 # YOLOv5 Training outputs
 yolov5-7.0/runs/
 
@@ -39,6 +37,10 @@ runs/**/*.pt
 
 # IDE
 .idea/
+
+# Installers (too large for Git, download separately)
+*.exe
+*.msi
 
 # OS
 .DS_Store
