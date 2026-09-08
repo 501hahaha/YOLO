@@ -165,3 +165,9 @@ names:
 | 训练太慢 | 加 `-NoCache` 关闭 RAM 缓存节省内存 |
 | 收敛不佳 | 增加 `-Epochs`，检查标注质量 |
 | 找不到数据集 | 确保 yaml 中 path 使用相对路径 |
+
+## 开源协议
+
+本项目原创代码采用 GNU General Public License v3.0（GPL-3.0）许可证，完整文本见根目录 [`LICENSE`](LICENSE)。
+
+仓库内的 `yolov5-7.0/` 和 `X-AnyLabeling/` 是第三方组件，继续遵循各自目录中的许可证和版权声明。
